@@ -3,14 +3,15 @@ import * as otpRepo from "../repository/otp.repository.js";
 import { timeToMS } from "../../../pkg/utils/time.js";
 import { sendEmail } from "../../../lib/email/email.js";
 import { generate0TPCode } from "../../../pkg/utils/otps.js";
-import { appError } from "../../../pkg/error/error.js";
+import { ApError } from "../../../pkg/error/error.js";
 import { userExist, userNotExist, userNotSignUp, userNotVerified, userVerified } from "../../user/utils/error.js";
 import { generateToken } from "../../../lib/security/jwt.js";
 import { comparePassword, hashPassword } from "../../../lib/security/bcrypt.js";
 import { OtpExpired, OtpNotMatch } from "../utils/error.js";
 import { logger } from "../../../pkg/logger/logger.js";
 import { verifyGoogleAccount } from "../../../lib/utils/google-Oauth.js";
-import { email } from "zod";
+import fs from 'node:fs'
+
 
 export async function register(userData) {
     // check if user already exists
@@ -95,7 +96,7 @@ export async function login(email, password) {
     //check pasword
     const checkPass = await comparePassword(password, checkUser.password)
     if (!checkPass) {
-        throw new appError("password is not correct", 400)
+        throw new ApError("password is not correct", 400)
     }
     //generate JWT token
     const payload = {
@@ -166,4 +167,11 @@ export async function loginWithGoogle(idToken) {
 export async function getAllUsers() {
     const users = await authRepo.getAllUsers()
     return users
+}
+export async function ProfilePic(user, path) {
+    if (user.profilePic) {
+        fs.unlinkSync(profilePic)
+    }
+
+    await authRepo.updateUserByEmail(user.email, { profilePic: path })
 }

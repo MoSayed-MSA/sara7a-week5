@@ -88,3 +88,13 @@ export async function getAllUsers(req, res, next) {
         next(error);
     }
 }
+export async function uploadProfilePic(req, res, next) {
+    try {
+        const user = req.user
+        const filePath = req.file.path
+        await authService.ProfilePic(user, filePath)
+        successResponse(res, 200, "Uploaded file successfully");
+    } catch (error) {
+        next(error);
+    }
+}

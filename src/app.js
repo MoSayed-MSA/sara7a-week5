@@ -14,7 +14,6 @@ import cookieParser from 'cookie-parser';
 export function createApp() {
     const app = express();
     app.use(cors());
-
     app.use(cookieParser());
 
     // connect to DB
